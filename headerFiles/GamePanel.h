@@ -23,6 +23,7 @@ public:
     void render(sf::RenderTarget *target) override;
 
 private:
+    Board* board;
 
     bool pause;
     Button *pauseButton;

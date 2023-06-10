@@ -5,11 +5,9 @@
 
 class Board {
 public:
-    Board(const Board &) = delete;
+    Board();
 
-
-    static Board &get();
-
+    ~Board();
 
     std::vector<Node *> getFields();
 
@@ -26,10 +24,9 @@ public:
     void noMovesCheck();
 
 private:
-    Board();
+    Board(const Board &);
 
-    ~Board();
-
+    Board &operator=(const Board &);
 
     Node *lastClicked;
     std::vector<Node *> blocksToCopyTo;
@@ -38,10 +35,7 @@ private:
     std::vector<Node *> fields = {};
 
 
-    static Board s_Instance;
-
-
-    void initializeBoard();
+    void initializeFields();
 
     void initializeNeighbours();
 

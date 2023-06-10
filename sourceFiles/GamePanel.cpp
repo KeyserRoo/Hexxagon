@@ -4,11 +4,11 @@
 #include "cmath"
 #include "../headerFiles/GamePanel.h"
 
-Board Board::s_Instance;
-
 GamePanel::GamePanel(sf::RenderWindow *window, std::stack<Panel *> *states) : Panel(window, states) {
     pauseMenu = new PauseMenu(*window);
     pause = false;
+
+    board = new Board();
 
     neutralLeft = 58;
     player = Owner::Red;
@@ -30,6 +30,7 @@ GamePanel::~GamePanel() {
     delete winQuit;
 
     delete font;
+    delete board;
 }
 
 
@@ -41,7 +42,7 @@ void GamePanel::update(const float &deltaTime) {
             updatePauseButtons();
         } else {
             pauseButton->update(mousePositionView);
-            for (Node *hexagon: Board::get().getFields()) {
+            for (Node *hexagon: board->getFields()) {
                 hexagon->updateTeam();
             }
             updateButtons();
@@ -66,16 +67,16 @@ void GamePanel::updateInput(const float &deltaTime) {
     if (!gameRuns) return;
     if (pause) return;
     if (!sf::Mouse::isButtonPressed(sf::Mouse::Left)) return;
-    for (Node *hexagon: Board::get().getFields()) {
+    for (Node *hexagon: board->getFields()) {
         if (hexagon->getTeam() == Owner::Red || hexagon->getTeam() == Owner::Blue)
             hexagon->update(mousePositionView);
         if (hexagon->getPressed() && hexagon->getTeam() == player) {
-            Board::get().setlastClicked(hexagon);
-            Board::get().checkNeighbours(hexagon);
+            board->setlastClicked(hexagon);
+            board->checkNeighbours(hexagon);
         }
     }
-    player = Board::get().playerMoves(mousePositionView,player);
-    Board::get().noMovesCheck();
+    player = board->playerMoves(mousePositionView,player);
+    board->noMovesCheck();
     updateScore();
 }
 
@@ -108,11 +109,11 @@ void GamePanel::updatePauseButtons() {
 
 
 void GamePanel::render(sf::RenderTarget *target) {
-    for (Node *hexagon: Board::get().getFields()) {
+    for (Node *hexagon: board->getFields()) {
         hexagon->renderHex(target);
     }
     renderScore(target);
-    Board::get().renderNeighbours(target);
+    board->renderNeighbours(target);
     pauseButton->renderImageButton(target);
     if (!gameRuns)renderWinScreen(target);
     if (pause) this->pauseMenu->render(*target);
@@ -129,7 +130,7 @@ void GamePanel::calculateScore() {
     playerRedScore = 0;
     playerBlueScore = 0;
     neutralLeft = 58;
-    for (Node *hexagon: Board::get().getFields()) {
+    for (Node *hexagon: board->getFields()) {
         if (hexagon->getTeam() == Owner::Red) playerRedScore++;
         if (hexagon->getTeam() == Owner::Blue) playerBlueScore++;
     }

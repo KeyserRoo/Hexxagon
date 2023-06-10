@@ -8,6 +8,8 @@ class Panel {
 public:
     Panel(sf::RenderWindow *window, std::stack<Panel *> *panels);
 
+    virtual ~Panel() = default;
+
 
     sf::RenderWindow *window;
 

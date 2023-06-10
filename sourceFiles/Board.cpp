@@ -1,7 +1,7 @@
 #include "../headerFiles/Board.h"
 
 Board::Board() {
-    initializeBoard();
+    initializeFields();
     initializeNeighbours();
     lastClicked = nullptr;
 }
@@ -10,11 +10,6 @@ Board::~Board() {
     for (Node *hexagon: fields) {
         delete hexagon;
     }
-}
-
-
-Board &Board::get() {
-    return s_Instance;
 }
 
 
@@ -32,6 +27,23 @@ void Board::renderNeighbours(sf::RenderTarget *target) {
     }
 }
 
+
+void Board::initializeFields() {
+    for (int i = 0; i < 81; ++i) {
+        int sum = (i % 9) + ((i - (i % 9)) / 9);
+        if (sum > 3 && sum < 13)fields.push_back(new Node(Owner::None, std::pair<int,int>{(i - (i % 9)) / 9, i % 9}));
+        else fields.push_back(new Node(Owner::Nothing, std::pair<int,int>{(i - (i % 9)) / 9, i % 9}));
+    }
+    fields[49]->setTeam(Owner::Nothing);
+    fields[39]->setTeam(Owner::Nothing);
+    fields[32]->setTeam(Owner::Nothing);
+    fields[72]->setTeam(Owner::Red);
+    fields[44]->setTeam(Owner::Red);
+    fields[4]->setTeam(Owner::Red);
+    fields[76]->setTeam(Owner::Blue);
+    fields[36]->setTeam(Owner::Blue);
+    fields[8]->setTeam(Owner::Blue);
+}
 
 void Board::initializeNeighbours() {
     std::vector<std::pair<int, int>> oneTileIndexing = {{0,  -1},
@@ -71,23 +83,6 @@ void Board::initializeNeighbours() {
             hexagon->twoTileNeighbours.push_back(fields[check]);
         }
     }
-}
-
-void Board::initializeBoard() {
-    for (int i = 0; i < 81; ++i) {
-        int sum = (i % 9) + ((i - (i % 9)) / 9);
-        if (sum > 3 && sum < 13)fields.push_back(new Node(Owner::None, std::pair<int,int>{(i - (i % 9)) / 9, i % 9}));
-        else fields.push_back(new Node(Owner::Nothing, std::pair<int,int>{(i - (i % 9)) / 9, i % 9}));
-    }
-    fields[49]->setTeam(Owner::Nothing);
-    fields[39]->setTeam(Owner::Nothing);
-    fields[32]->setTeam(Owner::Nothing);
-    fields[72]->setTeam(Owner::Red);
-    fields[44]->setTeam(Owner::Red);
-    fields[4]->setTeam(Owner::Red);
-    fields[76]->setTeam(Owner::Blue);
-    fields[36]->setTeam(Owner::Blue);
-    fields[8]->setTeam(Owner::Blue);
 }
 
 
